@@ -2,7 +2,7 @@ import cdk = require('@aws-cdk/core');
 import ec2 = require('@aws-cdk/aws-ec2');
 import autoscaling = require('@aws-cdk/aws-autoscaling');
 import iam = require('@aws-cdk/aws-iam');
-import { BastionHostLinux, SubnetType } from '@aws-cdk/aws-ec2';
+import { BastionHostLinux, SubnetType, AmazonLinuxGeneration } from '@aws-cdk/aws-ec2';
 import { Asset } from '@aws-cdk/aws-s3-assets';
 
 const path = require('path');
@@ -13,11 +13,14 @@ export class McdemoCdkStack extends cdk.Stack {
 
     const vpc = new ec2.Vpc(this, 'VPC');
 
-    // TODO: add tgw when Multicast is supported in CFN/CDK, use CLI  from Bastion Host in the meantime
-
     const bastionhost = new ec2.BastionHostLinux(this, 'BastionHost', {vpc: vpc});
     bastionhost.instance.userData.addCommands(
+      'yum update -y',
       'yum install -y tmux',
+      'yum install -y omping',
+      'curl -O https://bootstrap.pypa.io/get-pip.py',
+      'python get-pip.py',
+      'pip install awscli --upgrade',
       '\n',
     );
     
@@ -43,7 +46,7 @@ export class McdemoCdkStack extends cdk.Stack {
     const asglinux = new autoscaling.AutoScalingGroup(this, 'ASGLINUX', {
       vpc,
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
-      machineImage: new ec2.AmazonLinuxImage(),
+      machineImage: new ec2.AmazonLinuxImage({generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2}),
       desiredCapacity: 3,
       role: asgrole,
     });
@@ -52,6 +55,7 @@ export class McdemoCdkStack extends cdk.Stack {
 
     asglinux.userData.addCommands(
       'yum update -y',
+      'yum install -y omping',
       'yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm',
       'yum install -y iperf',
       '\n',
