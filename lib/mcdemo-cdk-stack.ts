@@ -3,14 +3,13 @@ import ec2 = require('@aws-cdk/aws-ec2');
 import autoscaling = require('@aws-cdk/aws-autoscaling');
 import iam = require('@aws-cdk/aws-iam');
 import { BastionHostLinux, SubnetType, AmazonLinuxGeneration } from '@aws-cdk/aws-ec2';
-import { Asset } from '@aws-cdk/aws-s3-assets';
 
 const path = require('path');
 
 export class McdemoCdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-
+    
     const vpc = new ec2.Vpc(this, 'VPC');
 
     const bastionhost = new ec2.BastionHostLinux(this, 'BastionHost', {vpc: vpc});
@@ -18,6 +17,8 @@ export class McdemoCdkStack extends cdk.Stack {
       'yum update -y',
       'yum install -y tmux',
       'yum install -y omping',
+      'yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm',
+      'yum install -y iperf',
       'curl -O https://bootstrap.pypa.io/get-pip.py',
       'python get-pip.py',
       'pip install awscli --upgrade',
@@ -55,9 +56,13 @@ export class McdemoCdkStack extends cdk.Stack {
 
     asglinux.userData.addCommands(
       'yum update -y',
+      'yum update -y tmux',
       'yum install -y omping',
       'yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm',
       'yum install -y iperf',
+      'curl -O https://bootstrap.pypa.io/get-pip.py',
+      'python get-pip.py',
+      'pip install awscli --upgrade',
       '\n',
     );
 

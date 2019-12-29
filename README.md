@@ -2,7 +2,7 @@
 
 ## Getting started
 
-
+TODO Bootstrap demo env with CDK
 
 ## Create a Transit Gateway with Multicast Support
 
@@ -27,4 +27,21 @@ Go to the VPC console, Transit Gateway Multicast Domains and click [Create Trans
 Select the domain you created above, open the **Associations** tab and click **Create Association**. Choose the attachment to associate and select the two private subnets. Click **Create Association**. 
 
 ![CreateDomainAssociation](img/CreateDomainAssociation.gif)
+
+## Add a multicast source
+
+TODO
+
+## Add multicast members
+
+TODO
+
+## Test using iperf
+
+TODO
+
+## Test using omping
+
+TODO
+
 
