@@ -4,8 +4,6 @@ import autoscaling = require('@aws-cdk/aws-autoscaling');
 import iam = require('@aws-cdk/aws-iam');
 import { BastionHostLinux, SubnetType, AmazonLinuxGeneration } from '@aws-cdk/aws-ec2';
 
-const path = require('path');
-
 export class McdemoCdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
