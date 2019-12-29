@@ -2,7 +2,7 @@
 
 This demo uses an environment in the AWS us-east-1 region containing the following resources:
 
-* VPC with public and private subnets across 3 AZs
+* A VPC with public and private subnets across multiple AZs
 * A Linux Bastion Host, accessible using SSM Session Manager and to be used as the multicast traffic source.
 * An AutoScaling Group with 3 instances, accessible using SSM Session Manager and to be used as the multicast traffic receivers.
 * A Transit Gateway with Multicast support.
@@ -22,6 +22,8 @@ cd aws-multicast-demo
 npm install
 cdk deploy
 ```
+
+Confirm the deployment changes.
 
 CDK will deploy the VPC and instances to your AWS account in the us-east-1 region, the process will take about 10-20 minutes.
 
@@ -51,10 +53,12 @@ Select the domain you created above, open the **Associations** tab and click **C
 
 ## Add a multicast source
 
+Go to the EC2 console and take a note of the Bastion Host instance ID, we'll need the ID to identify the ENI we are adding as a multicast domain source.
 TODO
 
 ## Add multicast members
 
+Go to the EC2 console and take a note of the ASG instance IDs, we'll need the IDs to identify the ENIs we are adding as multicast domain destinations.
 TODO
 
 ## Test using iperf
@@ -68,6 +72,3 @@ TODO
 ## Test using Python sender and receiver scripts
 
 TODO
-
-
-
