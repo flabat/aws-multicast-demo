@@ -7,4 +7,4 @@ import { McdemoCdkStack } from '../lib/mcdemo-cdk-stack';
 const DemoEnv = { region: 'us-east-1'}
 
 const app = new cdk.App();
-new McdemoCdkStack(app, 'McdemoCdkStack');
+new McdemoCdkStack(app, 'McdemoCdkStack', { env: DemoEnv });

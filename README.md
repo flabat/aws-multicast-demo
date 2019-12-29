@@ -1,8 +1,29 @@
 # AWS Transit Gateway Multicast Demo
 
+This demo uses an environment in the AWS us-east-1 region containing the following resources:
+
+* VPC with public and private subnets across 3 AZs
+* A Linux Bastion Host, accessible using SSM Session Manager and to be used as the multicast traffic source.
+* An AutoScaling Group with 3 instances, accessible using SSM Session Manager and to be used as the multicast traffic receivers.
+* A Transit Gateway with Multicast support.
+  
+## Requirements
+
+* [AWS CDK](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html)
+* [Git Client](https://git-scm.com/)
+* [Existing AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
+  
 ## Getting started
 
-TODO Bootstrap demo env with CDK
+From your terminal run the following commands:
+```bash
+git clone https://github.com/flabat/aws-multicast-demo.git
+cd aws-multicast-demo
+npm install
+cdk deploy
+```
+
+CDK will deploy the VPC and instances to your AWS account in the us-east-1 region, the process will take about 10-20 minutes.
 
 ## Create a Transit Gateway with Multicast Support
 
@@ -43,5 +64,10 @@ TODO
 ## Test using omping
 
 TODO
+
+## Test using Python sender and receiver scripts
+
+TODO
+
 
 
