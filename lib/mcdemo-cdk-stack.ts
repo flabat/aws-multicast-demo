@@ -12,16 +12,18 @@ export class McdemoCdkStack extends cdk.Stack {
     
     const vpc = new ec2.Vpc(this, 'VPC');
 
-    const bastionhost = new ec2.BastionHostLinux(this, 'BastionHost', {vpc: vpc});
+    const bastionhost = new ec2.BastionHostLinux(this, 'MCBastionHost', {vpc: vpc});
     bastionhost.instance.userData.addCommands(
       'yum update -y',
-      'yum install -y tmux',
+      'yum update -y tmux',
       'yum install -y omping',
       'yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm',
       'yum install -y iperf',
       'curl -O https://bootstrap.pypa.io/get-pip.py',
       'python get-pip.py',
       'pip install awscli --upgrade',
+      'curl https://raw.githubusercontent.com/flabat/aws-multicast-demo/master/scripts/mcreceiver.py -o /opt/mcreceiver.py',
+      'curl https://raw.githubusercontent.com/flabat/aws-multicast-demo/master/scripts/mcsender.py -o /opt/mcsender.py',
       '\n',
     );
     
@@ -53,6 +55,7 @@ export class McdemoCdkStack extends cdk.Stack {
     });
 
     asglinux.addSecurityGroup(asgsg);
+    bastionhost.instance.addSecurityGroup(asgsg);
 
     asglinux.userData.addCommands(
       'yum update -y',
@@ -63,6 +66,8 @@ export class McdemoCdkStack extends cdk.Stack {
       'curl -O https://bootstrap.pypa.io/get-pip.py',
       'python get-pip.py',
       'pip install awscli --upgrade',
+      'curl https://raw.githubusercontent.com/flabat/aws-multicast-demo/master/scripts/mcreceiver.py -o /opt/mcreceiver.py',
+      'curl https://raw.githubusercontent.com/flabat/aws-multicast-demo/master/scripts/mcsender.py -o /opt/mcsender.py',
       '\n',
     );
 
