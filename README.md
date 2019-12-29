@@ -2,7 +2,7 @@
 
 This demo uses an environment in the AWS us-east-1 region containing the following resources:
 
-* A VPC with public and private subnets across multiple AZs
+* A VPC with public and private subnets across three AZs.
 * A Linux Bastion Host, accessible using SSM Session Manager and to be used as the multicast traffic source.
 * An AutoScaling Group with 3 instances, accessible using SSM Session Manager and to be used as the multicast traffic receivers.
 * A Transit Gateway with Multicast support.
@@ -16,6 +16,7 @@ This demo uses an environment in the AWS us-east-1 region containing the followi
 ## Getting started
 
 From your terminal run the following commands:
+
 ```bash
 git clone https://github.com/flabat/aws-multicast-demo.git
 cd aws-multicast-demo
