@@ -64,7 +64,7 @@ From the [Transit Gateway Mulicast console](https://console.aws.amazon.com/vpc/h
 
 ![Add Members](img/TGW-Add-Members.png)
 
-## Start terminal sessions to the source and members intances
+## Start terminal sessions to the source and member instances
 
 Now that you have a one source and multiple members, you will use `iperf`, `omping`, and a Python sample application to test connectivity and bandwidth between the EC2 instances in the multicast domain.
 
