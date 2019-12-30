@@ -1,6 +1,6 @@
 # AWS Transit Gateway Multicast Demo
 
-This guide helps you create an environment to demo the AWS Transit Gateway Multicast feature. The environment will deploy to the us-east-1 AWS region, and contains the following resources:
+With this guide you can create an environment for the purposes of demonstrating AWS Transit Gateway Multicast features. The environment will deploy to the `us-east-1` AWS region, and contains the following resources:
 
 * A VPC with public and private subnets across two AZs.
 * A Linux Bastion Host, accessible using SSM Session Manager, to be used as the multicast traffic source.
