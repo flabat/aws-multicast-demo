@@ -25,8 +25,6 @@ export class McdemoCdkStack extends cdk.Stack {
       '\n',
     );
     
-    bastionhost.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess')); // WARNING: Adds full Admin Access to the Bastion Host Instance Role
-
     const asgrole = new iam.Role(this, 'ASGROLE', {
       assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com')
     });
