@@ -4,7 +4,7 @@ With this guide you can create an environment for the purposes of demonstrating 
 
 * A VPC with public and private subnets across two AZs.
 * A Linux Bastion Host, accessible using SSM Session Manager, to be used as the multicast traffic source.
-* An AutoScaling Group with 3 instances, accessible using SSM Session Manager and to be used as  multicast traffic receivers.
+* An AutoScaling Group with three instances, accessible using SSM Session Manager and to be used as  multicast traffic receivers.
 * A Transit Gateway with Multicast support.
   
 ## Requirements
@@ -78,6 +78,8 @@ You should now have four browser windows/tabs with sessions established to the s
 
 ## Test multicast connectivity using `iperf`
 
+To learn more about `iperf`, you can visit the project documentation site [here](https://iperf.fr/iperf-doc.php#doc)
+
 Start `iperf` servers in each of the instances part of the Autoscaling Group, these are the instances that will receive traffic from the source (BastionHost). Use the command below to listen for UDP multicast traffic on the group address `239.0.0.1`
 
 `iperf -s -u -B 239.0.0.1`
@@ -111,6 +113,9 @@ To send one message every one second continuously, you can use the following one
 To stop the python scripts  press CTRL+C.
 
 ## Test multicast connectivity using `omping`
+
+To learn more about `omping`, you can visit the project documentation site [here](https://linux.die.net/man/8/omping)
+
 
 The `omping`  tool needs the IP addresses of the instances you want to test connectivity, replace the 10.99.x.x addresses in the command below with your own and run the command on all terminal sessions starting with the BastionHost:
 
