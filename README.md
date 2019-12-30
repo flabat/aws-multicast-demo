@@ -1,8 +1,8 @@
 # AWS Transit Gateway Multicast Demo
 
-This demo uses an environment in the AWS us-east-1 region containing the following resources:
+This guide helps you creating an environment to demonstrate the AWS Transit Gateway Multicast feature. The environment will be in the AWS us-east-1 region, containing the following resources:
 
-* A VPC with public and private subnets across three AZs.
+* A VPC with public and private subnets across two AZs.
 * A Linux Bastion Host, accessible using SSM Session Manager and to be used as the multicast traffic source.
 * An AutoScaling Group with 3 instances, accessible using SSM Session Manager and to be used as the multicast traffic receivers.
 * A Transit Gateway with Multicast support.
@@ -54,22 +54,75 @@ Select the domain you created above, open the **Associations** tab and click **C
 
 ## Add a multicast source
 
-Go to the EC2 console and take a note of the Bastion Host instance ID, we'll need the ID to identify the ENI we are adding as a multicast domain source.
-TODO
+From the [Transit Gateway Mulicast console](https://console.aws.amazon.com/vpc/home?region=us-east-1#TransitGatewayMulticastDomains:sort=transitGatewayMulticastDomainId), select the multicast domain you created earlier. Click the **Groups** tab and click **Add source**. Enter `239.0.0.1` in the **Group IP Address** field. In the **Choose network interfaces** filter field type `BastionHost`, select  the ENI. Click the **Add sources** button to complete the operation.
+
+![Add Members](img/TGW-Add-Sources.png)
 
 ## Add multicast members
 
-Go to the EC2 console and take a note of the ASG instance IDs, we'll need the IDs to identify the ENIs we are adding as multicast domain destinations.
-TODO
+From the [Transit Gateway Mulicast console](https://console.aws.amazon.com/vpc/home?region=us-east-1#TransitGatewayMulticastDomains:sort=transitGatewayMulticastDomainId), select the multicast domain you created earlier. Click the **Groups** tab and click **Add member**. Enter `239.0.0.1` in the **Group IP Address** field. In the **Choose network interfaces** filter field type `ASGLINUX` (these are the instances in the Autoscaling group), select all thhe ENIs. Click the **Add Members** button to complete the operation.
 
-## Test using iperf
+![Add Members](img/TGW-Add-Members.png)
 
-TODO
+## Start terminal sessions to the source and members intances
 
-## Test using omping
+Now that you have a one source and multiple members, you will use `iperf`, `omping`, and a Python sample application to test connectivity and bandwidth between the EC2 instances in the multicast domain.
 
-TODO
+Open the EC2 console, select the [BastionHost instance](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=BastionHost;sort=instanceState) and click **Connect**. For Connection method, select **Session Manager** and click **Connect**. Leave this session tab open.
 
-## Test using Python sender and receiver scripts
+Open the EC2 console, select the [McdemoCdkStack/ASGLINUX](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=BastionHost;sort=instanceState) one at the time and click **Connect**. For Connection method, select **Session Manager** and click **Connect**. Leave these sessions tabs open.
 
-TODO
+You should now have four browser windows/tabs with sessions established to the source and member instances.
+
+![Sessions](img/SSS-Sessions.png)
+
+## Test multicast connectivity using `iperf`
+
+Start `iperf` servers in each of the instances part of the Autoscaling Group, these are the instances that will receive traffic from the source (BastionHost). Use the command below to listen for UDP multicast traffic on the group address `239.0.0.1`
+
+`iperf -s -u -B 239.0.0.1`
+
+Start an `iperf` client in the BastionHost (source) instance. Use the command below to send UDP multicast traffic to the group address `239.0.0.1`
+
+`iperf -u -c 239.0.0.1`
+
+You can also add parameters to `iperf` to create parallel connections, how long the test will run for, and how much bandwidth per connection to use. The command below will create a client with 10 connections, for 30 seconds, and 1Gb/s per connection.
+
+`iperf -u -c 239.0.0.1 -t 30 -P 10 -b 1G`
+
+To stop the `iperf` servers press CTRL+C twice.
+
+## Test multicast connectivity using Python
+
+The instances contain two Python scripts, a sender script to run in the BastionHost and a receiver script to run in the AutoScaling instances.
+
+In the Autoscaling group instances (receivers) terminal sessions, execute the following:
+
+`python /opt/mcreceiver.py`
+
+In the BastionHost instance (sender) terminal session, execute the following to send one message to the receivers:
+
+`python /opt/mcsender.py`
+
+To send one message every one second continuously, you can use the following one liner:
+
+`while true; do python /opt/mcsender.py; sleep 1; done;`
+
+To stop the python scripts  press CTRL+C.
+
+## Test multicast connectivity using `omping`
+
+The `omping`  tool needs the IP addresses of the instances you want to test connectivity, replace the 10.99.x.x addresses in the command below with your own and run the command on all terminal sessions starting with the BastionHost:
+
+`omping -m 239.0.0.1 -p 1234 10.99.x.x 10.99.x.x 10.99.x.x 10.99.x.x`
+
+For example, in my environment the command is: `omping -m 239.0.0.1 -p 1234 10.99.169.17 10.99.147.76 10.99.195.70 10.99.248.153`
+
+You should see unicast responses in all instances from the other instances, but multicast responses only in the receiver instances.
+
+## Clean up
+
+* Delete all the subnet associations from the [Multicast domain](https://console.aws.amazon.com/vpc/home?region=us-east-1#TransitGatewayMulticastDomains:sort=transitGatewayMulticastDomainId).
+* Delete the VPC attachment from the [Transit Gateway Attachments](https://console.aws.amazon.com/vpc/home?region=us-east-1#TransitGatewayAttachments:sort=transitGatewayAttachmentId) console.
+* Delete the Transit Gateway from the [Transit Gateways](https://console.aws.amazon.com/vpc/home?region=us-east-1#TransitGateways:sort=transitGatewayId) console.
+* Run `cdk destroy` from your terminal in the folder you cloned this repo.
