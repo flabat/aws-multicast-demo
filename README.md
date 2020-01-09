@@ -78,7 +78,7 @@ You should now have four browser windows/tabs with sessions established to the s
 
 ## Test multicast connectivity using `iperf`
 
-To learn more about `iperf`, you can visit the project documentation site [here](https://iperf.fr/iperf-doc.php#doc)
+To learn more about `iperf`, you can visit the project documentation site [here](https://iperf.fr/iperf-doc.php#doc).
 
 Start `iperf` servers in each of the instances part of the Autoscaling Group, these are the instances that will receive traffic from the source (BastionHost). Use the command below to listen for UDP multicast traffic on the group address `239.0.0.1`
 
@@ -114,7 +114,7 @@ To stop the python scripts  press CTRL+C.
 
 ## Test multicast connectivity using `omping`
 
-To learn more about `omping`, you can visit the project documentation site [here](https://linux.die.net/man/8/omping)
+To learn more about `omping`, you can visit the project documentation site [here](https://linux.die.net/man/8/omping).
 
 
 The `omping`  tool needs the IP addresses of the instances you want to test connectivity, replace the 10.99.x.x addresses in the command below with your own and run the command on all terminal sessions starting with the BastionHost:
@@ -124,6 +124,39 @@ The `omping`  tool needs the IP addresses of the instances you want to test conn
 For example, in my environment the command is: `omping -m 239.0.0.1 -p 1234 10.99.169.17 10.99.147.76 10.99.195.70 10.99.248.153`
 
 You should see unicast responses in all instances from the other instances, but multicast responses only in the receiver instances.
+
+## Test multicast connectivity using `mcjoin`
+
+To learn more about `mcjoin`, you can visit the project documentation site [here](https://github.com/troglobit/mcjoin).
+
+1. Install `mcjoin` on Amazon Linux 2 as follows:
+
+    ```sh
+    sudo yum update -y
+    sudo yum groupinstall "Development Tools" -y
+    sudo yum install git -y
+    git clone https://github.com/troglobit/mcjoin.git
+    cd mcjoin/
+    ./autogen.sh
+    ./configure && make
+    sudo make install-strip
+    ```
+
+1. On the multicast source server, start the sender with:
+
+    ```sh
+    mcjoin -s 239.0.0.1
+    ```
+
+1. On the multicast member server(s), join the multicast group and start listening:
+
+    ```sh
+    mcjoin -j 239.0.0.1
+    ```
+
+This will use the default UDP port 1234 for sending/ receiving packets. You can override it like `-p 5678`.
+
+![Running mcjoin on EC2](img/mcjoin.gif)
 
 ## Clean up
 
